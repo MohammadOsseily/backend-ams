@@ -14,11 +14,11 @@ if ($conn->connect_error) {
     die(json_encode(["error" => "Connection failed: " . $conn->connect_error]));
 }
 
-if (isset($_GET['hotel_id'])) {
-    $hotel_id = $_GET['hotel_id'];
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
 
-    $stmt = $conn->prepare("SELECT name, price_per_night, available_rooms, city, address FROM hotels WHERE hotel_id = ?");
-    $stmt->bind_param("i", $hotel_id);
+    $stmt = $conn->prepare("SELECT name, price_per_night, available_rooms, city, address FROM hotels WHERE id = ?");
+    $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
 
