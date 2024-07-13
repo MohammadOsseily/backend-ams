@@ -2,7 +2,17 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once '../../config/db.php';
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "flight_management_system";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -30,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->user_id) && isset($data
         $stmt->execute();
 
         // Increase the flight capacity
-        $stmt = $conn->prepare("UPDATE flights SET capacity = capacity + 1 WHERE flight_id = ?");
+        $stmt = $conn->prepare("UPDATE flights SET capacity = capacity + 1 WHERE id = ?");
         $stmt->bind_param("i", $flight_id);
         $stmt->execute();
 
