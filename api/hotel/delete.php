@@ -2,6 +2,7 @@
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header('Content-Type: application/json');
 
 $servername = "localhost";
 $username = "root";
@@ -15,7 +16,16 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $hotel_id = $_POST["hotel_id"];
+    // Get the JSON data from the request body
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    // Check if the ID is set
+    if (!isset($data['id'])) {
+        echo json_encode(["status" => "error", "message" => "ID is required"]);
+        exit;
+    }
+
+    $id = $data['id'];
 
     // Start a transaction
     $conn->begin_transaction();
@@ -23,14 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     try {
         // Delete related bookings first
         $stmt = $conn->prepare("DELETE FROM hotel_bookings WHERE hotel_id = ?");
-        $stmt->bind_param("i", $hotel_id);
+        $stmt->bind_param("i", $id);
         if (!$stmt->execute()) {
             throw new Exception("Failed to delete related bookings: " . $stmt->error);
         }
 
         // Delete the hotel
-        $stmt = $conn->prepare("DELETE FROM hotels WHERE hotel_id = ?");
-        $stmt->bind_param("i", $hotel_id);
+        $stmt = $conn->prepare("DELETE FROM hotels WHERE id = ?");
+        $stmt->bind_param("i", $id);
         if (!$stmt->execute()) {
             throw new Exception("Failed to delete hotel: " . $stmt->error);
         }
