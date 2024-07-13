@@ -1,24 +1,5 @@
 <?php
-require 'vendor/autoload.php';
-
-use Dotenv\Dotenv;
-
-// Load environment variables from .env file
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
-$servername = $_ENV['DB_HOST'];
-$username = $_ENV['DB_USERNAME'];
-$password = $_ENV['DB_PASSWORD'];
-$dbname = $_ENV['DB_NAME'];
-
-// Create connection
-$conn = new mysqli($servername, $username, $password);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error . "\n");
-}
+require 'db.php';
 
 // Create database
 $sql = "CREATE DATABASE IF NOT EXISTS $dbname";
@@ -61,8 +42,7 @@ $tables = [
         email VARCHAR(100) NOT NULL UNIQUE,
         first_name VARCHAR(50) NOT NULL,
         last_name VARCHAR(50) NOT NULL,
-        role VARCHAR(10) NOT NULL,
-        
+        role VARCHAR(10) NOT NULL
     )",
     "CREATE TABLE airports (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -149,3 +129,4 @@ foreach ($tables as $sql) {
 
 // Close connection
 $conn->close();
+
