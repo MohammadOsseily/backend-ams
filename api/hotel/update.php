@@ -17,8 +17,8 @@ if ($conn->connect_error) {
 
 $data = json_decode(file_get_contents("php://input"));
 
-if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->hotel_id)) {
-    $hotel_id = $data->hotel_id;
+if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->id)) {
+    $id = $data->id;
     $name = $data->name;
     $price_per_night = $data->price_per_night;
     $available_rooms = $data->available_rooms;
@@ -35,11 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->hotel_id)) {
             city = ?,
             address = ?
         WHERE
-            hotel_id = ?
+            id = ?
     ";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('ssdssi', $name, $price_per_night, $available_rooms, $city, $address, $hotel_id);
+    $stmt->bind_param('ssdssi', $name, $price_per_night, $available_rooms, $city, $address, $id);
 
     try {
         $stmt->execute();
