@@ -4,7 +4,17 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE, PUT");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 header('Content-Type: application/json');
 
-require_once '../../config/db.php';
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "flight_management_system";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($_GET['user_id']) && isset($_GET['flight_id'])) {
     $user_id = $_GET["user_id"];
