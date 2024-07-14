@@ -2,17 +2,7 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$db_name = "flight_management_system";
-
-$conn = new mysqli($servername, $username, $password, $db_name);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
+require '../../config/db.php';
 
 // Get user ID from query parameter
 $user_id = isset($_GET['user_id']) ? $_GET['user_id'] : die();

@@ -4,18 +4,7 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 header('Content-Type: application/json');
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$db_name = "flight_management_system";
-
-// Establish database connection
-$conn = new mysqli($servername, $username, $password, $db_name);
-
-// Check for connection errors
-if ($conn->connect_error) {
-    die(json_encode(["status" => "error", "message" => "Connection failed: " . $conn->connect_error]));
-}
+require '../../config/db.php';
 
 // Check if it's a POST request
 if ($_SERVER['REQUEST_METHOD'] == "POST") {

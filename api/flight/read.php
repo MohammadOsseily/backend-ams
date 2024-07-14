@@ -1,30 +1,26 @@
 <?php
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE, PUT");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 header("Content-Type: application/json; charset=UTF-8");
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "flight_management_system";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
+require '../../config/db.php';
 
 $sql = "
     SELECT
-        id,
-        flight_number,
-        departure_airport_id,
-        arrival_airport_id,
-        departure_time,
-        arrival_time,
-        price,
-        capacity
-    FROM flights;
+        flights.id,
+        flights.flight_number,
+        flights.departure_airport_id,
+        departure_airport.name AS departure_airport_name,
+        flights.arrival_airport_id,
+        arrival_airport.name AS arrival_airport_name,
+        flights.departure_time,
+        flights.arrival_time,
+        flights.price,
+        flights.capacity
+    FROM flights
+    JOIN airports AS departure_airport ON flights.departure_airport_id = departure_airport.id
+    JOIN airports AS arrival_airport ON flights.arrival_airport_id = arrival_airport.id;
 ";
 
 $result = $conn->query($sql);
