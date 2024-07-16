@@ -30,9 +30,27 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->id)) {
         exit;
     }
 
+    // Validate that departure time is not in the past
+    if (strtotime($departure_time) < time()) {
+        echo json_encode(["status" => "error", "message" => "Departure time must be in the future"]);
+        exit;
+    }
+
     // Validate flight number format (alphanumeric and length between 1 and 10)
     if (!preg_match('/^[a-zA-Z0-9]{1,10}$/', $flight_number)) {
         echo json_encode(["status" => "error", "message" => "Invalid flight number format"]);
+        exit;
+    }
+
+     // Validate capacity (positive integer)
+     if (!filter_var($capacity, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]])) {
+        echo json_encode(["status" => "error", "message" => "Invalid capacity value"]);
+        exit;
+    }
+
+    // Validate price (positive float)
+    if (!filter_var($price, FILTER_VALIDATE_FLOAT) || $price <= 0) {
+        echo json_encode(["status" => "error", "message" => "Invalid price value"]);
         exit;
     }
 

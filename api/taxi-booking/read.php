@@ -11,25 +11,27 @@ require '../../config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Prepare and execute
-    $stmt = $conn->prepare('SELECT id, username, email, first_name, last_name, role FROM users');
+    $stmt = $conn->prepare('SELECT id, user_id, taxi_id, pick_up_location, drop_off_location, pick_up_time, booking_date, status FROM taxi_bookings');
     if ($stmt) {
         $stmt->execute();
         $stmt->store_result();
-        $stmt->bind_result($id, $username, $email, $first_name, $last_name, $role);
+        $stmt->bind_result($id, $user_id, $taxi_id, $pick_up_location, $drop_off_location, $pick_up_time, $booking_date, $status);
 
-        $users = [];
+        $bookings = [];
         while ($stmt->fetch()) {
-            $users[] = [
+            $bookings[] = [
                 "id" => $id,
-                "username" => $username,
-                "email" => $email,
-                "first_name" => $first_name,
-                "last_name" => $last_name,
-                "role" => $role
+                "user_id" => $user_id,
+                "taxi_id" => $taxi_id,
+                "pick_up_location" => $pick_up_location,
+                "drop_off_location" => $drop_off_location,
+                "pick_up_time" => $pick_up_time,
+                "booking_date" => $booking_date,
+                "status" => $status
             ];
         }
 
-        echo json_encode(["status" => "success", "data" => $users]);
+        echo json_encode(["status" => "success", "data" => $bookings]);
 
         // Close statement
         $stmt->close();

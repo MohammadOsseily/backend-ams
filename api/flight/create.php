@@ -37,6 +37,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST"
         exit;
     }
 
+    // Validate that departure time is not in the past
+    if (strtotime($departure_time) < time()) {
+        echo json_encode(["status" => "error", "message" => "Departure time must be in the future"]);
+        exit;
+    }
+
+
     // Validate flight number format (alphanumeric and length between 1 and 10)
     if (!preg_match('/^[a-zA-Z0-9]{1,10}$/', $flight_number)) {
         echo json_encode(["status" => "error", "message" => "Invalid flight number format"]);

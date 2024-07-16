@@ -58,8 +58,8 @@ $tables = [
         arrival_time DATETIME NOT NULL,
         price DECIMAL(10, 2) NOT NULL,
         capacity INT NOT NULL,
-        FOREIGN KEY (departure_airport_id) REFERENCES airports(id),
-        FOREIGN KEY (arrival_airport_id) REFERENCES airports(id)
+        FOREIGN KEY (departure_airport_id) REFERENCES airports(id) ON DELETE CASCADE,
+        FOREIGN KEY (arrival_airport_id) REFERENCES airports(id)ON DELETE CASCADE
     )",
     "CREATE TABLE bookings (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,8 +67,8 @@ $tables = [
         flight_id INT NOT NULL,
         booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         status VARCHAR(20) DEFAULT 'confirmed',
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        FOREIGN KEY (flight_id) REFERENCES flights(id)
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (flight_id) REFERENCES flights(id) ON DELETE CASCADE
     )",
     "CREATE TABLE hotels (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -86,8 +86,8 @@ $tables = [
         check_out_date DATE NOT NULL,
         booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         status VARCHAR(20) DEFAULT 'confirmed',
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        FOREIGN KEY (hotel_id) REFERENCES hotels(id)
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON DELETE CASCADE
     )",
     "CREATE TABLE taxis (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -105,8 +105,8 @@ $tables = [
         pick_up_time DATETIME NOT NULL,
         booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         status VARCHAR(20) DEFAULT 'confirmed',
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        FOREIGN KEY (taxi_id) REFERENCES taxis(id)
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (taxi_id) REFERENCES taxis(id) ON DELETE CASCADE
     )",
     "CREATE TABLE trip_suggestions (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -115,7 +115,7 @@ $tables = [
         preferences TEXT NOT NULL,
         suggestions TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )"
 ];
 

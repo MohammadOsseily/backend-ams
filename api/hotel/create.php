@@ -23,8 +23,8 @@ if (!$name || !$city || !$address || !$price_per_night || !$available_rooms) {
 }
 
 // Validate numeric fields
-if (!is_numeric($price_per_night) || !is_numeric($available_rooms)) {
-    echo json_encode(["error" => "Price per Night and Available Rooms must be numeric values"]);
+if (!is_numeric($price_per_night) || $price_per_night <= 0 || !is_numeric($available_rooms) || $available_rooms <= 0) {
+    echo json_encode(["error" => "Price per Night and Available Rooms must be positive numeric values"]);
     exit;
 }
 

@@ -16,6 +16,18 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->id)) {
     $city = $data->city;
     $address = $data->address;
 
+    // Validate required fields
+if (!$name || !$city || !$address || !$price_per_night || !$available_rooms) {
+    echo json_encode(["error" => "Please fill out all required fields"]);
+    exit;
+}
+
+// Validate numeric fields
+if (!is_numeric($price_per_night) || $price_per_night <= 0 || !is_numeric($available_rooms) || $available_rooms <= 0) {
+    echo json_encode(["error" => "Price per Night and Available Rooms must be positive numeric values"]);
+    exit;
+}
+
     // Update hotel in the database
     $sql = "
         UPDATE hotels

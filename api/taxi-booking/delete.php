@@ -17,26 +17,6 @@ function validateInput($data) {
     } elseif (!is_numeric($data["id"])) {
         $errors[] = "ID must be a number";
     }
-    
-    if (empty($data["company_name"])) {
-        $errors[] = "Company name is required";
-    }
-    
-    if (empty($data["city"])) {
-        $errors[] = "City is required";
-    }
-    
-    if (empty($data["phone_number"])) {
-        $errors[] = "Phone number is required";
-    } elseif (!preg_match('/^[0-9-]+$/', $data["phone_number"])) {
-        $errors[] = "Phone number can only contain digits and hyphens";
-    }
-    
-    if (empty($data["price_per_km"])) {
-        $errors[] = "Price per km is required";
-    } elseif (!is_numeric($data["price_per_km"])) {
-        $errors[] = "Price per km must be a number";
-    }
 
     return $errors;
 }
@@ -48,22 +28,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = validateInput($data);
     if (empty($errors)) {
         $id = $data["id"];
-        $company_name = $data["company_name"];
-        $city = $data["city"];
-        $phone_number = $data["phone_number"];
-        $price_per_km = $data["price_per_km"];
 
-        // Prepare and bind
-        $stmt = $conn->prepare('UPDATE taxis SET company_name = ?, city = ?, phone_number = ?, price_per_km = ? WHERE id = ?');
+        // Prepare and execute
+        $stmt = $conn->prepare('DELETE FROM taxi_bookings WHERE id = ?');
         if ($stmt) {
-            $stmt->bind_param('sssdi', $company_name, $city, $phone_number, $price_per_km, $id);
+            $stmt->bind_param('i', $id);
 
             // Execute statement
             if ($stmt->execute()) {
                 if ($stmt->affected_rows > 0) {
-                    echo json_encode(["status" => "success", "message" => "Taxi updated successfully"]);
+                    echo json_encode(["status" => "success", "message" => "Taxi booking deleted successfully"]);
                 } else {
-                    echo json_encode(["status" => "error", "message" => "Taxi not found or no changes made"]);
+                    echo json_encode(["status" => "error", "message" => "Taxi booking not found"]);
                 }
             } else {
                 echo json_encode(["status" => "error", "message" => $stmt->error]);
