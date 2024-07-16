@@ -1,8 +1,7 @@
 .env
 
-../node_modules
+node_modules/
+vendor/
 
-../vendor
-
-!/../composer.json
-!/../composer.lock
+composer.json
+composer.lock
