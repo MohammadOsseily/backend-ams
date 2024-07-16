@@ -1,4 +1,8 @@
 .env
-!composer.json
-!composer.lock
-vendor/
+
+../node_modules
+
+../vendor
+
+!/../composer.json
+!/../composer.lock
