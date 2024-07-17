@@ -30,26 +30,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $id = $data["id"];
 
         // Prepare and execute
-        $stmt = $conn->prepare('SELECT id, username, email, first_name, last_name, role FROM users WHERE id = ?');
+        $stmt = $conn->prepare('SELECT id, user_id, taxi_id, pick_up_location, drop_off_location, pick_up_time, booking_date, status FROM taxi_bookings WHERE id = ?');
         if ($stmt) {
             $stmt->bind_param('i', $id);
             $stmt->execute();
             $stmt->store_result();
-            $stmt->bind_result($id, $username, $email, $first_name, $last_name, $role);
+            $stmt->bind_result($id, $user_id, $taxi_id, $pick_up_location, $drop_off_location, $pick_up_time, $booking_date, $status);
 
             if ($stmt->num_rows > 0) {
                 $stmt->fetch();
-                $user = [
+                $booking = [
                     "id" => $id,
-                    "username" => $username,
-                    "email" => $email,
-                    "first_name" => $first_name,
-                    "last_name" => $last_name,
-                    "role" => $role
+                    "user_id" => $user_id,
+                    "taxi_id" => $taxi_id,
+                    "pick_up_location" => $pick_up_location,
+                    "drop_off_location" => $drop_off_location,
+                    "pick_up_time" => $pick_up_time,
+                    "booking_date" => $booking_date,
+                    "status" => $status
                 ];
-                echo json_encode(["status" => "success", "data" => $user]);
+                echo json_encode(["status" => "success", "data" => $booking]);
             } else {
-                echo json_encode(["status" => "error", "message" => "User not found"]);
+                echo json_encode(["status" => "error", "message" => "Taxi booking not found"]);
             }
 
             // Close statement

@@ -9,29 +9,49 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 require '../../config/db.php';
 
+function validateInput($data) {
+    $errors = [];
+
+    if (empty($data["id"])) {
+        $errors[] = "ID is required";
+    } elseif (!is_numeric($data["id"])) {
+        $errors[] = "ID must be a number";
+    }
+
+    return $errors;
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Prepare and execute
-    $stmt = $conn->prepare('SELECT id, name, location FROM airports');
-    if ($stmt) {
-        $stmt->execute();
-        $stmt->store_result();
-        $stmt->bind_result($id, $name, $location);
+    $data = json_decode(file_get_contents("php://input"), true);
 
-        $airports = [];
-        while ($stmt->fetch()) {
-            $airports[] = [
-                "id" => $id,
-                "name" => $name,
-                "location" => $location
-            ];
+    // Validate input
+    $errors = validateInput($data);
+    if (empty($errors)) {
+        $id = $data["id"];
+
+        // Prepare and execute
+        $stmt = $conn->prepare('DELETE FROM airports WHERE id = ?');
+        if ($stmt) {
+            $stmt->bind_param('i', $id);
+
+            // Execute statement
+            if ($stmt->execute()) {
+                if ($stmt->affected_rows > 0) {
+                    echo json_encode(["status" => "success", "message" => "Airport deleted successfully"]);
+                } else {
+                    echo json_encode(["status" => "error", "message" => "Airport not found"]);
+                }
+            } else {
+                echo json_encode(["status" => "error", "message" => $stmt->error]);
+            }
+
+            // Close statement
+            $stmt->close();
+        } else {
+            echo json_encode(["status" => "error", "message" => $conn->error]);
         }
-
-        echo json_encode(["status" => "success", "data" => $airports]);
-
-        // Close statement
-        $stmt->close();
     } else {
-        echo json_encode(["status" => "error", "message" => $conn->error]);
+        echo json_encode(["status" => "error", "message" => "Invalid input", "errors" => $errors]);
     }
 } else {
     echo json_encode(["status" => "error", "message" => "Invalid request method"]);
