@@ -4,7 +4,6 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require '../../config/db.php';
 
-// Query to fetch all bookings and join with flights to get flight details
 $sql = "
     SELECT b.*, f.flight_number, f.departure_time, f.arrival_time, 
            da.name AS departure_airport, aa.name AS arrival_airport
@@ -19,11 +18,9 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     $bookings = array();
 
-    // Fetch and organize bookings by flight
     while ($row = $result->fetch_assoc()) {
         $flight_id = $row['flight_id'];
 
-        // Initialize the flight array if it doesn't exist
         if (!isset($bookings[$flight_id])) {
             $bookings[$flight_id] = array(
                 'flight_number' => $row['flight_number'],
@@ -35,7 +32,6 @@ if ($result->num_rows > 0) {
             );
         }
 
-        // Add booking details to the corresponding flight
         $bookings[$flight_id]['bookings'][] = array(
             'id' => $row['id'],
             'user_id' => $row['user_id'],
@@ -44,7 +40,6 @@ if ($result->num_rows > 0) {
         );
     }
 
-    // Format the output as required
     $formatted_bookings = array();
     foreach ($bookings as $flight_id => $flight_details) {
         $formatted_bookings[] = array(

@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->user_id) && isset($data
     $flight_id = $data->flight_id;
     $booking_date = date('Y-m-d H:i:s');
 
-    // Check if the current time is behind the departure time of the flight
     $stmt = $conn->prepare("SELECT departure_time, capacity FROM flights WHERE id = ?");
     $stmt->bind_param("i", $flight_id);
     $stmt->execute();
@@ -30,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->user_id) && isset($data
         exit();
     }
 
-    // Check if the user has already booked this flight
     $stmt = $conn->prepare("SELECT * FROM bookings WHERE user_id = ? AND flight_id = ?");
     $stmt->bind_param("ii", $user_id, $flight_id);
     $stmt->execute();

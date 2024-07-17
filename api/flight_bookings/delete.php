@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->user_id) && isset($data
     $user_id = $data->user_id;
     $flight_id = $data->flight_id;
 
-    // Check if the booking exists
     $stmt = $conn->prepare("SELECT * FROM bookings WHERE user_id = ? AND flight_id = ?");
     $stmt->bind_param("ii", $user_id, $flight_id);
     $stmt->execute();
@@ -26,12 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->user_id) && isset($data
     $conn->begin_transaction();
 
     try {
-        // Delete the booking
         $stmt = $conn->prepare("DELETE FROM bookings WHERE user_id = ? AND flight_id = ?");
         $stmt->bind_param("ii", $user_id, $flight_id);
         $stmt->execute();
 
-        // Increase the flight capacity
         $stmt = $conn->prepare("UPDATE flights SET capacity = capacity + 1 WHERE id = ?");
         $stmt->bind_param("i", $flight_id);
         $stmt->execute();
