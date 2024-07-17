@@ -107,15 +107,6 @@ $tables = [
         status VARCHAR(20) DEFAULT 'confirmed',
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         FOREIGN KEY (taxi_id) REFERENCES taxis(id) ON DELETE CASCADE
-    )",
-    "CREATE TABLE trip_suggestions (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
-        destination VARCHAR(100) NOT NULL,
-        preferences TEXT NOT NULL,
-        suggestions TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )"
 ];
 
