@@ -8,6 +8,9 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 require '../../../config/db.php';
+require '../../../vendor/autoload.php'; // Ensure this path is correct for autoloading Firebase JWT
+
+use \Firebase\JWT\JWT;
 
 function validateInput($data) {
     $errors = [];
@@ -43,9 +46,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($stmt->num_rows > 0) {
                 $stmt->fetch();
                 if (password_verify($password, $hashed_password)) {
-                    echo json_encode([
-                        "status" => "success",
-                        "message" => "Login successful",
+                    $secret_key = "hbjiabiunajkcnjaebiudqnp!#@$"; // Change this to your actual secret key
+                    $issuer_claim = "localhost"; // this can be the server name
+                    $audience_claim = "localhost";
+                    $issuedat_claim = time(); // issued at
+                    $notbefore_claim = $issuedat_claim + 10; // not before in seconds
+                    $expire_claim = $issuedat_claim + 3600; // expire time in seconds (1 hour)
+                    $token = [
+                        "iss" => $issuer_claim,
+                        "aud" => $audience_claim,
+                        "iat" => $issuedat_claim,
+                        "nbf" => $notbefore_claim,
+                        "exp" => $expire_claim,
                         "data" => [
                             "id" => $id,
                             "username" => $username,
@@ -54,6 +66,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             "last_name" => $last_name,
                             "role" => $role
                         ]
+                    ];
+
+                    $jwt = JWT::encode($token, $secret_key, 'HS256');
+
+                    echo json_encode([
+                        "status" => "success",
+                        "message" => "Login successful",
+                        "jwt" => $jwt,
+                        "expireAt" => $expire_claim
                     ]);
                 } else {
                     echo json_encode(["status" => "error", "message" => "Invalid password"]);
@@ -76,3 +97,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Close connection
 $conn->close();
+

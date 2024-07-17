@@ -3,11 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-<<<<<<< HEAD
-        'reference' => '79a9b8fc7d33696f56d667cf7af5b9c035edb5ae',
-=======
-        'reference' => 'e9880982201014898557fce28c4b82b52000f4cc',
->>>>>>> d5c45b36545aafee4de0de8eb5b20bcfaed336ec
+        'reference' => 'f2ca254a276325c50e61015fc1ad1bef67be841d',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -17,13 +13,18 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-<<<<<<< HEAD
-            'reference' => '79a9b8fc7d33696f56d667cf7af5b9c035edb5ae',
-=======
-            'reference' => 'e9880982201014898557fce28c4b82b52000f4cc',
->>>>>>> d5c45b36545aafee4de0de8eb5b20bcfaed336ec
+            'reference' => 'f2ca254a276325c50e61015fc1ad1bef67be841d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'firebase/php-jwt' => array(
+            'pretty_version' => 'v6.10.1',
+            'version' => '6.10.1.0',
+            'reference' => '500501c2ce893c824c801da135d02661199f60c5',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../firebase/php-jwt',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
