@@ -11,7 +11,6 @@ $data = json_decode(file_get_contents("php://input"), true);
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data['id'])) {
     $id = $data['id'];
 
-    // Validate id (ensure it's a positive integer)
     if (!filter_var($id, FILTER_VALIDATE_INT) || $id <= 0) {
         echo json_encode(["status" => "error", "message" => "Invalid flight ID"]);
         exit;

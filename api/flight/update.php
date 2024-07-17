@@ -18,43 +18,36 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->id)) {
     $capacity = $data->capacity;
     $price = $data->price;
 
-    // Validate that departure and arrival airports are not the same
     if ($departure_airport == $arrival_airport) {
         echo json_encode(["status" => "error", "message" => "Departure and arrival airports cannot be the same"]);
         exit;
     }
 
-    // Validate that departure time is before arrival time
     if (strtotime($departure_time) >= strtotime($arrival_time)) {
         echo json_encode(["status" => "error", "message" => "Departure time must be before arrival time"]);
         exit;
     }
 
-    // Validate that departure time is not in the past
     if (strtotime($departure_time) < time()) {
         echo json_encode(["status" => "error", "message" => "Departure time must be in the future"]);
         exit;
     }
 
-    // Validate flight number format (alphanumeric and length between 1 and 10)
     if (!preg_match('/^[a-zA-Z0-9]{1,10}$/', $flight_number)) {
         echo json_encode(["status" => "error", "message" => "Invalid flight number format"]);
         exit;
     }
 
-     // Validate capacity (positive integer)
      if (!filter_var($capacity, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]])) {
         echo json_encode(["status" => "error", "message" => "Invalid capacity value"]);
         exit;
     }
 
-    // Validate price (positive float)
     if (!filter_var($price, FILTER_VALIDATE_FLOAT) || $price <= 0) {
         echo json_encode(["status" => "error", "message" => "Invalid price value"]);
         exit;
     }
 
-    // Ensure airport IDs exist in the database
     $airport_check_sql = "SELECT id FROM airports WHERE id IN (?, ?)";
     $stmt = $conn->prepare($airport_check_sql);
     $stmt->bind_param('ii', $departure_airport, $arrival_airport);
@@ -66,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->id)) {
         exit;
     }
 
-    // Update flight in the database
     $sql = "
         UPDATE flights
         SET

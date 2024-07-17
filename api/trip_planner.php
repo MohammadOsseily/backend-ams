@@ -42,20 +42,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
     $arrival_airport_result = $stmt->get_result();
 
-    if ($departure_airport_result->num_rows > 0 && $arrival_airport_result->num_rows > 0) {
-        $departure_airport = $departure_airport_result->fetch_assoc();
-        $arrival_airport = $arrival_airport_result->fetch_assoc();
-        $departure_airport_id = $departure_airport['id'];
-        $arrival_airport_id = $arrival_airport['id'];
+    $departure_airport_ids = [];
+    $arrival_airport_ids = [];
 
+    while ($row = $departure_airport_result->fetch_assoc()) {
+        $departure_airport_ids[] = $row['id'];
+    }
+
+    while ($row = $arrival_airport_result->fetch_assoc()) {
+        $arrival_airport_ids[] = $row['id'];
+    }
+
+    if (!empty($departure_airport_ids) && !empty($arrival_airport_ids))  {
         $flights_query = "
-            SELECT * FROM flights
-            WHERE departure_airport_id = ? AND arrival_airport_id = ? 
-            AND departure_time BETWEEN ? AND ? 
-            AND capacity > 0
-        ";
+        SELECT * FROM flights
+        WHERE departure_airport_id IN (" . implode(",", $departure_airport_ids) . ")
+        AND arrival_airport_id IN (" . implode(",", $arrival_airport_ids) . ")
+        AND departure_time BETWEEN ? AND ?
+        AND capacity > 0
+    ";
         $stmt = $conn->prepare($flights_query);
-        $stmt->bind_param("iiss", $departure_airport_id, $arrival_airport_id, $date_range_start, $date_range_end);
+        $stmt->bind_param("ss", $date_range_start, $date_range_end);
         $stmt->execute();
         $flights_result = $stmt->get_result();
 
@@ -107,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($response['hotels'] as $hotel) {
             foreach ($response['taxis'] as $taxi) {
                 $hotel_total_cost = $hotel['price_per_night'] * $num_days;
-                $taxi_total_cost = $taxi['price_per_km'] * 10 * $num_days;
+                $taxi_total_cost = $taxi['price_per_km'] * $num_days;
                 $total_cost = $flight['price'] + $hotel_total_cost + $taxi_total_cost;
                 if ($total_cost <= $preferred_budget) {
                     $valid_trips[] = [
@@ -134,30 +141,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         - Number of Days: $num_days
         - Budget: $preferred_budget
 
-        Flight Options:\n";
+        Trip Options:\n";
 
-        foreach ($valid_trips as $index => $trip) {
-            $trip_plan_prompt .= "Option " . ($index + 1) . ":
-            - Flight Number: " . $trip['flight']['flight_number'] . "
-            - Departure Time: " . $trip['flight']['departure_time'] . "
-            - Arrival Time: " . $trip['flight']['arrival_time'] . "
-            - Price: $" . $trip['flight']['price'] . "\n";
-        }
-
-        $trip_plan_prompt .= "\nHotel Options:\n";
-        foreach ($valid_trips as $index => $trip) {
-            $trip_plan_prompt .= "Option " . ($index + 1) . ":
-            - Hotel Name: " . $trip['hotel']['name'] . "
-            - Address: " . $trip['hotel']['address'] . "
-            - Price per Night: $" . $trip['hotel']['price_per_night'] . "\n";
-        }
-
-        $trip_plan_prompt .= "\nTaxi Options:\n";
-        foreach ($valid_trips as $index => $trip) {
-            $trip_plan_prompt .= "Option " . ($index + 1) . ":
-            - Taxi Service: " . $trip['taxi']['company_name'] . "
-            - Price per KM: $" . $trip['taxi']['price_per_km'] . "\n";
-        }
+        
+foreach ($valid_trips as $index => $trip) {
+    $trip_plan_prompt .= "Option " . ($index + 1) . ":\n";
+    
+    $trip_plan_prompt .= "- Flight Number: " . $trip['flight']['flight_number'] . "\n";
+    $trip_plan_prompt .= "- Departure Time: " . $trip['flight']['departure_time'] . "\n";
+    $trip_plan_prompt .= "- Arrival Time: " . $trip['flight']['arrival_time'] . "\n";
+    $trip_plan_prompt .= "- Price: $" . $trip['flight']['price'] . "\n\n";
+    
+    $trip_plan_prompt .= "- Hotel Name: " . $trip['hotel']['name'] . "\n";
+    $trip_plan_prompt .= "- Address: " . $trip['hotel']['address'] . "\n";
+    $trip_plan_prompt .= "- Price per Night: $" . $trip['hotel']['price_per_night'] . "\n\n";
+    
+    $trip_plan_prompt .= "- Taxi Service: " . $trip['taxi']['company_name'] . "\n";
+    $trip_plan_prompt .= "- Price per KM: $" . $trip['taxi']['price_per_km'] . "\n\n";
+}
 
         $trip_plan_prompt .= "
         Based on the above options, create a detailed trip plan. The plan should include:
