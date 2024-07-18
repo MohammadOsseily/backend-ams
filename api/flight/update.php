@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($data->id)) {
     ";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('siisiidi', $flight_number, $departure_airport, $arrival_airport, $departure_time, $arrival_time, $capacity, $price, $id);
+    $stmt->bind_param('siissiis', $flight_number, $departure_airport, $arrival_airport, $departure_time, $arrival_time, $capacity, $price, $id);
 
     try {
         $stmt->execute();
